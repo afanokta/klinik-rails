@@ -10,24 +10,56 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_15_023255) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_16_080351) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "departements", force: :cascade do |t|
+  create_table "appointments", force: :cascade do |t|
+    t.date "date"
+    t.integer "status"
+    t.integer "schedule_id"
+    t.integer "patient_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "departements", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "medical_histories", force: :cascade do |t|
+    t.string "complaint"
+    t.string "diagnosis"
+    t.string "prescription"
+    t.integer "appointment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "schedules", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.date "day"
-    t.datetime "start_time"
-    t.datetime "end_time"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_schedules_on_user_id"
+    t.bigint "doctor_id"
+    t.integer "day"
+    t.time "start_time"
+    t.time "end_time"
+    t.index ["doctor_id"], name: "index_schedules_on_doctor_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "email"
+    t.string "password_digest"
+    t.string "name"
+    t.datetime "dob"
+    t.integer "gender"
+    t.string "phone_number"
+    t.integer "role"
+    t.integer "departement_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
