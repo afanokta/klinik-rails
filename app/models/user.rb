@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
 
-  belongs_to :department, optional: true
+  belongs_to :departement, optional: true
   has_many :schedules, class_name: 'Schedule', foreign_key: 'doctor_id'
   has_many :appointments, class_name: 'Appointment', foreign_key: 'patient_id'
 
@@ -27,7 +27,7 @@ class User < ApplicationRecord
       dob: self.dob,
       gender: self.gender,
       phone_number: self.phone_number,
-      department: self.department&.new_attr,
+      department: self.departement&.new_attr,
       role: self.role
     }
   end
@@ -38,7 +38,7 @@ class User < ApplicationRecord
       dob: self.dob,
       gender: self.gender,
       phone_number: self.phone_number,
-      department: self.department.name,
+      department: self.departement.name,
       role: self.role
     }
   end
