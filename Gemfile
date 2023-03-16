@@ -49,3 +49,5 @@ end
 # additional gems
 
 gem 'dotenv-rails'
+
+gem 'jwt'
