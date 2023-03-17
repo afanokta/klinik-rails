@@ -1,12 +1,13 @@
 class MedicalHistoryController < ApplicationController
-end
-class MedicalHistoryController < ApplicationController
-  before_action :set_medical_history, only: [:show, :update, :destroy]
+  before_action :set_medical_history, only: %i[show update destroy]
 
   def index
+    @meds = MedicalHistory.all if current_user.admin?
     @meds = MedicalHistory.patient_history(current_user) if current_user.patient?
     @meds = MedicalHistory.doctor_history(current_user) if current_user.doctor?
-    render json: @meds.map { |med| med.new_attr }, status: :ok
+    return render json: { message: 'No record Found' }, status: :not_found if @meds.nil?
+
+    render json: @meds.map(&:new_attr), status: :ok
   end
 
   def create
