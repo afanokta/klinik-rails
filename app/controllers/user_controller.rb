@@ -13,7 +13,7 @@ class UserController < ApplicationController
   end
 
   def create
-    user_params.role = 0
+    # user_params.role = 0
     @user = User.new(user_params)
     unless @user.save
       render json: @schuser.errors, status: :unprocessable_entity
