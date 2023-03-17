@@ -4,13 +4,16 @@ class AppointmentController < ApplicationController
   before_action :allowed?, only: %I[update destroy]
 
   def index
-    @appointments = Appointment.by_doctor(current_user) if current_user.doctor?
-    @appointments = Appointment.by_patient(current_user) if current_user.patient?
-    render json: @appointments.map(&:new_attr), status: :ok
+    @appointments = Appointment.by_doctor(current_user.id).display_all(params) if @current_user.doctor?
+    @appointments = Appointment.by_patient(current_user.id).display_all(params) if @current_user.patient?
+    @appointments = Appointment.display_all(params) if @current_user.admin?
+    result = @appointments.blank? ? { message: 'no record found' } : @appointments.map(&:new_attr)
+    render json: result, status: :ok
   end
 
   def create
     @appointment = Appointment.new(appointment_params)
+    @appointment.patient_id = @current_user.id
     return render json: @appointment.errors, status: :unprocessable_entity unless @appointment.save
 
     render json: @appointment.new_attr, status: :ok
@@ -45,7 +48,7 @@ class AppointmentController < ApplicationController
   end
 
   def allowed?
-    if current_user.doctor! && Appointment.doctor_detail(@appointment, current_user).blank?
+    if current_user.doctor! && Appointment.doctor_detail(@appointment, current_user.id).blank?
       render json: { message: 'you are not allowed!!' }, status: :forbidden
       return
     end
