@@ -59,4 +59,5 @@ gem 'faker'
 gem 'rails_admin'
 
 gem "sassc-rails"
-gem "sassc-rails"
+
+gem "dockerfile-rails", ">= 1.2", :group => :development
