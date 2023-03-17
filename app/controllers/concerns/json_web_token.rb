@@ -1,7 +1,7 @@
 require 'jwt'
- require 'dotenv/load'
-module JsonWebToken
+require 'dotenv/load'
 
+module JsonWebToken
   SECRET_KEY = ENV['SECRET_KEY']
 
   def self.AuthorizeApiRequest(headers = {})
