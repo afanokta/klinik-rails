@@ -13,7 +13,7 @@ class MedicalHistory < ApplicationRecord
       complaint: self.complaint,
       diagnosis: self.diagnosis,
       prescription: self.prescription,
-      appointment: self.appointment,
+      appointment: self.appointment.new_attr,
       user: self.appointment.patient.new_attr,
       doctor: self.appointment.schedule.doctor.doc_attr
     }
