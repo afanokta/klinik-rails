@@ -1,7 +1,7 @@
 class SchedulesController < ApplicationController
   before_action :set_schedule, only: [:show, :update, :destroy]
   before_action :check_doctor?, only: [:create, :update, :destroy]
-  before_action :allowed?, only: [:create, :update, :destroy]
+  before_action :allowed?, only: [:update, :destroy]
 
   def index
     @schs = Schedule.all
@@ -9,8 +9,8 @@ class SchedulesController < ApplicationController
   end
 
   def create
-    schedule_params.doctor_id = current_user.id
     @schedule = Schedule.new(schedule_params)
+    @schedule.doctor_id = @current_user.id
     return render json: @schedule.errors, status: :unprocessable_entity unless @schedule.save
 
     render json: @schedule.new_attr, status: :ok
@@ -46,6 +46,7 @@ class SchedulesController < ApplicationController
   end
 
   def allowed?
+    return render json: @schedule
     if @schedule.doctor_id != current_user.id
       render json: { message: 'you\'re not allowed!!' }, status: :forbidden
       return
