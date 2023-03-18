@@ -4,42 +4,42 @@ class DepartementsController < ApplicationController
     # GET /departements
     def index
       @departements = Departement.all
-  
-      render json: @departements.map { |departement| departement.new_attributes }
+
+      render json: @departements.map { |departement| departement.new_attr }
     end
-  
+
     # GET /departement/1
     def show
-      render json: @departement.new_attributes
+      render json: @departement.new_attr
     end
-  
+
     # POST /departement
     def create
       @departement = Departement.new(departement_params)
-  
+
       if @departement.save
-        render json: @departement.new_attributes, status: :created
+        render json: @departement.new_attr, status: :created
       else
         render json: @departement.errors, status: :unprocessable_entity
       end
     end
-  
+
     # PATCH/PUT /departement/1
     def update
       if @departement.update(departement_params)
-        render json: @departement.new_attributes
+        render json: @departement.new_attr
       else
         render json: @departement.errors, status: :unprocessable_entity
       end
     end
-  
+
     # DELETE /departement/1
     def destroy
       @departement.destroy
     end
-  
+
     private
-  
+
       # Only allow a trusted parameter "white list" through.
     def departement_params
         params.permit(:name)
