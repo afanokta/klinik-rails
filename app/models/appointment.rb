@@ -21,7 +21,7 @@ class Appointment < ApplicationRecord
   def new_attr
     {
       id: self.id,
-      schedule: self.schedule,
+      schedule: self.schedule.new_attr,
       date: self.date,
       status: self.status,
       patient: self.patient.new_attr
