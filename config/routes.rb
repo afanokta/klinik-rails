@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   resources :medical_history
   resources :schedules
   resources :appointment
-  resources :departments
+  resources :departements
   namespace 'user' do
   end
   get '/doctors', to: 'user#doctor'
