@@ -1,63 +1,55 @@
 class SchedulesController < ApplicationController
-    before_action :set_schedule, only: [:show, :update, :destroy]
+  before_action :set_schedule, only: [:show, :update, :destroy]
+  before_action :check_doctor?, only: [:create, :update, :destroy]
+  before_action :allowed?, only: [:update, :destroy]
 
-    # GET /schedules
-    def index
-      @schedules = Schedule.all
-  
-      render json: @schedules.map { |schedules| schedule.new_attributes }
-    end
-  
-    # GET /schedule/1
-    def show
-      render json: @schedule.new_attributes
-    end
-  
-    # POST /schedule
-    def create
-      @schedule = Schedule.new(schedule_params)
-  
-      if @schedule.save
-        render json: @schedule.new_attributes, status: :created
-      else
-        render json: @schedule.errors, status: :unprocessable_entity
-      end
-    end
-  
-    # PATCH/PUT /schedule/1
-    def update
-      if @schedule.update(schedule_params)
-        render json: @schedule.new_attributes
-      else
-        render json: @schedule.errors, status: :unprocessable_entity
-      end
-    end
-  
-    # DELETE /schedule/1
-    def destroy
-      @schedule.destroy
-    end
-  
-    private
-  
-      # Only allow a trusted parameter "white list" through.
-      def schedule_params
-        params.require(:schedule).permit(:id, :day, :start_time, :end_time )
-    end
-    def set_schedule
-      @schedule = Schedule.find_by_id(params[:id])
-      if @schedule.nil?
-        render json: { error: "schedule not found" }, status: :not_found
-      end
-    end
-#     def schedule_params
-#     {
-#       id: params[ :id],
-#     #   doctor_id: params[ :doctor_id],
-#       day: params[ :day],
-#       start_time: params[ :start_time],
-#       end_time: params[ :end_time]
-#     }
-#   end
+  def index
+    @schs = Schedule.all
+    render json: @schs.map(&:new_attr), status: :ok
+  end
 
+  def create
+    @schedule = Schedule.new(schedule_params)
+    @schedule.doctor_id = @current_user.id
+    return render json: @schedule.errors, status: :unprocessable_entity unless @schedule.save
+
+    render json: @schedule.new_attr, status: :ok
+  end
+
+  def show
+    render json: @schedule.new_attr
+  end
+
+  def update
+    return render json: @schedule.errors, status: :unprocessable_entity unless @schedule.update(schedule_params)
+    render json: @schedule.new_attr, status: :ok
+  end
+
+  def destroy
+    return render json: @schedule.errors, status: :unprocessable_entity unless @schedule.destroy
+    render json: @schedule.new_attr, status: :ok
+  end
+
+  private
+
+  def set_schedule
+    @schedule = Schedule.find_by_id(params[:id])
+    return render json: { message: 'Medical History not found' }, status: :not_found if @schedule.nil?
+  end
+
+  def schedule_params
+    params.require(:schedule).permit(:day, :start_time, :end_time, :doctor_id)
+  end
+
+  def check_doctor?
+    return render json: { message: 'only doctor can make schedule!!' }, status: :forbidden unless current_user.doctor?
+  end
+
+  def allowed?
+    return render json: @schedule
+    if @schedule.doctor_id != current_user.id
+      render json: { message: 'you\'re not allowed!!' }, status: :forbidden
+      return
+    end
+  end
 end
